@@ -248,19 +248,20 @@
                     appendTo: "#add-professor-modal",
                     source: function(request, response) {
                         var query = request.term.trim();
-                        $.get("{% url 'autocomplete' %}", {"query": query, "types[]": ["professor"], "return_attrs[]": ["name", "departments"]}, function(data) {
+                        $.get("{% url 'autocomplete' %}", {"query": query, "types[]": ["professor"], "return_attrs[]": ["name", "pk", "departments"]}, function(data) {
                             response(data.map(function(item) {
                                 var departments = item.result.departments;
                                 var label = item.result.name;
                                 if (departments.length > 0) {
                                     label += " (" + departments.slice(0, 3).join(", ") + (departments.length > 3 ? ", ..." : "") + ")";
                                 }
-                                return {"label": label, "value": item.result.name};
+                                return {"label": label, "value": item.result.name, "pk": item.result.pk};
                             }));
                         });
                     },
                     select: function(event, ui) {
                         $(this).val(ui.item.value);
+                        $("#add-professor-modal input[name='professor']").val(ui.item.pk);
                         $("#add-professor-modal input[name='type_'][value='professor']").prop("checked", true);
                         return false;
                     }
